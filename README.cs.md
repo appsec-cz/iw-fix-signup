@@ -45,7 +45,7 @@ sudo ./iw-fix-signup.sh [volby]
 
 ```powershell
 # Windows (PowerShell jako správce)
-.\iw-fix-signup.ps1 [volby]
+powershell -ExecutionPolicy Bypass -File .\iw-fix-signup.ps1 [volby]
 ```
 
 ### Volby

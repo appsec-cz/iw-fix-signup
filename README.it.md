@@ -45,7 +45,7 @@ sudo ./iw-fix-signup.sh [opzioni]
 
 ```powershell
 # Windows (PowerShell come amministratore)
-.\iw-fix-signup.ps1 [opzioni]
+powershell -ExecutionPolicy Bypass -File .\iw-fix-signup.ps1 [opzioni]
 ```
 
 ### Opzioni

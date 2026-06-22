@@ -37,8 +37,9 @@ param(
     [switch]$NoRestart,
     [switch]$DryRun
 )
-Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+# Never die silently: surface any unhandled error and exit with a clear message.
+trap { Write-Host "[x] ERROR: $($_.Exception.Message)" -ForegroundColor Red; exit 1 }
 
 $script:LB = $false
 $script:RC = 0
@@ -137,9 +138,19 @@ function Update-SignupXml { param([string]$File)
     $status = @{}
     foreach ($sec in @('restrictions','layout_settings')) {
         $section = $xml.SelectSingleNode("//$sec")
-        if (-not $section) { $status["$sec/disable_signup"]='no-section'; if($sec -eq 'restrictions'){$status["$sec/disable_signup_ip"]='no-section'}; continue }
+        if (-not $section) {
+            $section = $xml.CreateElement($sec)
+            [void]$xml.DocumentElement.AppendChild($xml.CreateWhitespace("`n    "))
+            [void]$xml.DocumentElement.AppendChild($section)
+            [void]$xml.DocumentElement.AppendChild($xml.CreateWhitespace("`n"))
+        }
         $item = $section.SelectSingleNode('item')
-        if (-not $item) { $status["$sec/disable_signup"]='no-item'; if($sec -eq 'restrictions'){$status["$sec/disable_signup_ip"]='no-item'}; continue }
+        if (-not $item) {
+            $item = $xml.CreateElement('item')
+            [void]$section.AppendChild($xml.CreateWhitespace("`n        "))
+            [void]$section.AppendChild($item)
+            [void]$section.AppendChild($xml.CreateWhitespace("`n    "))
+        }
         $node = $item.SelectSingleNode('disable_signup')
         if ($node) { $node.InnerText='1'; $node.SetAttribute('useraccess','view'); $node.SetAttribute('domainadminaccess','view'); $status["$sec/disable_signup"]='set' }
         else {
@@ -191,7 +202,10 @@ function Backup-File { param([string]$File)
 #---------------------------------------------------------------- start
 Write-Info 'Detecting IceWarp installation...'
 $root = Get-IwInstallDir
-if (-not $root) { Die "IceWarp installation not found. Use: -Path 'C:\Program Files\IceWarp'" 3 }
+if (-not $root) {
+    Write-Warn 'Could not auto-detect the IceWarp installation (checked registry InstallDir, the IceWarp service, and common paths).'
+    Die "Re-run with the path explicitly, e.g.:  powershell -ExecutionPolicy Bypass -File .\iw-fix-signup.ps1 -Path 'C:\Program Files\IceWarp'" 3
+}
 $root = $root.TrimEnd('\')
 $script:Root = $root
 $cfg  = Resolve-ConfigRoot $root

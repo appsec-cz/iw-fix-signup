@@ -146,8 +146,7 @@ my %st;
 sub set_or_insert {
     my ($body_ref, $name, $full, $after) = @_;
     if ($$body_ref =~ m{<\Q$name\E\b[^>]*>.*?</\Q$name\E>}s) {
-        $$body_ref =~ s{(<\Q$name\E\b[^>]*>).*?(</\Q$name\E>)}{${1}1${2}}s;
-        return 'set';
+        $$body_ref =~ s{(<\Q$name\E\b[^>]*>).*?(</\Q$name\E>)}{${1}1${2}}s; return 'set';
     }
     if (defined $after && $$body_ref =~ m{</\Q$after\E>}) {
         $$body_ref =~ s{(</\Q$after\E>)}{$1\n            $full}s; return 'inserted';
@@ -155,10 +154,24 @@ sub set_or_insert {
     if ($$body_ref =~ s{(<item\b[^>]*>)}{$1\n            $full}s) { return 'inserted'; }
     return 'no-item';
 }
+# Find root element (skip <?xml?> / comments). If none, start from <settings>.
+my ($root) = $content =~ /<([A-Za-z_][\w.\-]*)\b[^>]*>/;
+unless (defined $root) {
+    my $decl = ($content =~ /(<\?xml[^>]*\?>)/) ? "$1\n" : '';
+    $content = "${decl}<settings>\n</settings>\n"; $root = 'settings';
+}
+$content =~ s{<(\Q$root\E)((?:\s[^>]*?)?)/>}{<$1$2></$1>}s;   # expand self-closing root
+# Ensure each target section exists (insert before the root closing tag).
 for my $sec (@sections) {
-    my $matched = 0;
+    next if $content =~ /<\Q$sec\E\b[^>]*>/s;
+    my $ins = "    <$sec>\n    </$sec>\n";
+    $content =~ s{(</\Q$root\E\s*>)}{$ins$1}s;
+}
+# Per section: ensure <item>, then set/insert the elements.
+for my $sec (@sections) {
     $content =~ s{(<\Q$sec\E\b[^>]*>)(.*?)(</\Q$sec\E>)}{
-        $matched = 1; my ($open,$body,$close) = ($1,$2,$3);
+        my ($open,$body,$close) = ($1,$2,$3);
+        unless ($body =~ m{<item\b[^>]*>}s) { $body = "\n        <item></item>\n    "; }
         $st{"$sec/disable_signup"} = set_or_insert(\$body, 'disable_signup',
             '<disable_signup useraccess="view" domainadminaccess="view">1</disable_signup>', undef);
         if ($sec eq 'restrictions') {
@@ -167,14 +180,11 @@ for my $sec (@sections) {
         }
         $open.$body.$close;
     }gse;
-    unless ($matched) {
-        $st{"$sec/disable_signup"} = 'no-section';
-        $st{"$sec/disable_signup_ip"} = 'no-section' if $sec eq 'restrictions';
-    }
 }
 print STDERR "STATUS"; print STDERR " $_=$st{$_}" for sort keys %st; print STDERR "\n";
 print $content;
-for my $k (keys %st) { exit 3 if $st{$k} eq 'no-section' || $st{$k} eq 'no-item'; }
+for my $sec (@sections) { exit 3 unless ($st{"$sec/disable_signup"}//'') =~ /^(set|inserted)$/; }
+exit 3 unless ($st{"restrictions/disable_signup_ip"}//'') =~ /^(set|inserted)$/;
 exit 0;
 PERL
 
