@@ -73,7 +73,7 @@ the local PHP hotfix.
 
 ## Safety
 
-- A timestamped backup (`*.bak.<timestamp>`) is created before any file is changed.
+- A timestamped backup is created **outside the web root**, in `<install>/iw-fix-signup-backup/` (dir `700`, files `600`), before any file is changed — so a backup of `filesystem.php` is never web-accessible.
 - **Idempotent** — re-running makes no further changes.
 - **Verified** — the result is re-read and checked after writing.
 - `--dry-run` shows exactly what would change without writing.
@@ -100,10 +100,11 @@ unless `--no-restart` / `-NoRestart`):
 
 ## Rollback
 
-Restore the timestamped backup, e.g.:
+Restore from the backup directory (`<install>/iw-fix-signup-backup/`), e.g.:
 
 ```bash
-cp -p config/_webmail/settings.xml.bak.<timestamp> config/_webmail/settings.xml
+cp -p <install>/iw-fix-signup-backup/settings.xml.bak.<timestamp>    <install>/config/_webmail/settings.xml
+cp -p <install>/iw-fix-signup-backup/filesystem.php.bak.<timestamp>  <install>/html/_shared/tools/filesystem.php
 ```
 
 ## Disclaimer

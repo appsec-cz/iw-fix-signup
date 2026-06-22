@@ -74,7 +74,7 @@ upozorní a přesto aplikuje lokální PHP hotfix.
 
 ## Bezpečnost
 
-- Před každou změnou se vytvoří časová záloha (`*.bak.<časová značka>`).
+- Před každou změnou se vytvoří časová záloha **mimo web root**, do `<install>/iw-fix-signup-backup/` (adresář `700`, soubory `600`) — záloha `filesystem.php` tedy není veřejně dostupná přes web.
 - **Idempotentní** — opakované spuštění už nic nemění.
 - **Ověřené** — výsledek se po zápisu znovu načte a zkontroluje.
 - `--dry-run` přesně ukáže, co by se změnilo, bez zápisu.
@@ -101,10 +101,11 @@ pokud není zadáno `--no-restart` / `-NoRestart`):
 
 ## Návrat zpět (rollback)
 
-Obnovte časovou zálohu, např.:
+Obnovte ze záložního adresáře (`<install>/iw-fix-signup-backup/`), např.:
 
 ```bash
-cp -p config/_webmail/settings.xml.bak.<časová značka> config/_webmail/settings.xml
+cp -p <install>/iw-fix-signup-backup/settings.xml.bak.<časová značka>    <install>/config/_webmail/settings.xml
+cp -p <install>/iw-fix-signup-backup/filesystem.php.bak.<časová značka>  <install>/html/_shared/tools/filesystem.php
 ```
 
 ## Upozornění

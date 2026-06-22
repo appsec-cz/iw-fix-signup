@@ -182,7 +182,9 @@ function Test-DirWritable { param([string]$Dir)
     try { $t = Join-Path $Dir ([System.IO.Path]::GetRandomFileName()); [System.IO.File]::WriteAllText($t,'x'); Remove-Item -LiteralPath $t -Force; return $true } catch { return $false }
 }
 function Backup-File { param([string]$File)
-    $bak = "$File.bak.$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+    $bdir = Join-Path $script:Root 'iw-fix-signup-backup'   # outside the web root (not servable)
+    if (-not (Test-Path -LiteralPath $bdir)) { New-Item -ItemType Directory -Path $bdir -Force | Out-Null }
+    $bak = Join-Path $bdir ((Split-Path -Leaf $File) + ".bak.$(Get-Date -Format 'yyyyMMdd-HHmmss')")
     Copy-Item -LiteralPath $File -Destination $bak -Force; Write-Ok "Backup: $bak"; return $bak
 }
 
@@ -191,6 +193,7 @@ Write-Info 'Detecting IceWarp installation...'
 $root = Get-IwInstallDir
 if (-not $root) { Die "IceWarp installation not found. Use: -Path 'C:\Program Files\IceWarp'" 3 }
 $root = $root.TrimEnd('\')
+$script:Root = $root
 $cfg  = Resolve-ConfigRoot $root
 $settings = Join-Path $cfg '_webmail\settings.xml'
 $phpFile  = Join-Path $root 'html\_shared\tools\filesystem.php'

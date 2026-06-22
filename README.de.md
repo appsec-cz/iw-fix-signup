@@ -74,7 +74,7 @@ schreibgeschützt, warnt das Skript und wendet dennoch den lokalen PHP-Hotfix an
 
 ## Sicherheit
 
-- Vor jeder Änderung wird eine Sicherung mit Zeitstempel (`*.bak.<Zeitstempel>`) erstellt.
+- Vor jeder Änderung wird eine Sicherung mit Zeitstempel **außerhalb des Web-Roots** in `<install>/iw-fix-signup-backup/` (Verzeichnis `700`, Dateien `600`) erstellt — eine Sicherung von `filesystem.php` ist somit nicht über das Web erreichbar.
 - **Idempotent** — erneutes Ausführen ändert nichts weiter.
 - **Verifiziert** — das Ergebnis wird nach dem Schreiben erneut gelesen und geprüft.
 - `--dry-run` zeigt genau, was geändert würde, ohne zu schreiben.
@@ -101,10 +101,11 @@ Zum Anwenden der Änderung muss das Control-Modul neu gestartet werden
 
 ## Zurücksetzen (Rollback)
 
-Stellen Sie die Sicherung mit Zeitstempel wieder her, z. B.:
+Stellen Sie aus dem Sicherungsverzeichnis (`<install>/iw-fix-signup-backup/`) wieder her, z. B.:
 
 ```bash
-cp -p config/_webmail/settings.xml.bak.<Zeitstempel> config/_webmail/settings.xml
+cp -p <install>/iw-fix-signup-backup/settings.xml.bak.<Zeitstempel>    <install>/config/_webmail/settings.xml
+cp -p <install>/iw-fix-signup-backup/filesystem.php.bak.<Zeitstempel>  <install>/html/_shared/tools/filesystem.php
 ```
 
 ## Hinweis

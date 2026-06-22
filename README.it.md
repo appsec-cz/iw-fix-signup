@@ -74,7 +74,7 @@ sola lettura, lo script avvisa e applica comunque l'hotfix PHP locale.
 
 ## Sicurezza
 
-- Prima di ogni modifica viene creato un backup con marca temporale (`*.bak.<marca temporale>`).
+- Prima di ogni modifica viene creato un backup con marca temporale **al di fuori della web root**, in `<install>/iw-fix-signup-backup/` (cartella `700`, file `600`) — un backup di `filesystem.php` non è quindi accessibile dal web.
 - **Idempotente** — rieseguire non comporta ulteriori modifiche.
 - **Verificato** — il risultato viene riletto e controllato dopo la scrittura.
 - `--dry-run` mostra esattamente cosa cambierebbe senza scrivere.
@@ -101,10 +101,11 @@ automaticamente se non si specifica `--no-restart` / `-NoRestart`):
 
 ## Ripristino (rollback)
 
-Ripristinare il backup con marca temporale, ad es.:
+Ripristinare dalla cartella dei backup (`<install>/iw-fix-signup-backup/`), ad es.:
 
 ```bash
-cp -p config/_webmail/settings.xml.bak.<marca temporale> config/_webmail/settings.xml
+cp -p <install>/iw-fix-signup-backup/settings.xml.bak.<marca temporale>    <install>/config/_webmail/settings.xml
+cp -p <install>/iw-fix-signup-backup/filesystem.php.bak.<marca temporale>  <install>/html/_shared/tools/filesystem.php
 ```
 
 ## Avvertenza

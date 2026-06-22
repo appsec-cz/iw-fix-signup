@@ -83,9 +83,11 @@ detect_install_dir() {
     [[ -n "$INSTALL_DIR" ]]       && cands+=("$INSTALL_DIR")
     [[ -n "${ICEWARP_HOME:-}" ]]  && cands+=("$ICEWARP_HOME")
 
-    # /etc/icewarp/icewarp.conf -> IWS_INSTALL_DIR  (authoritative)
-    for conf in "$CONF_DEFAULT" /etc/icewarp/icewarp/conf; do
-        c="$(read_conf_install_dir "$conf")" && [[ -n "$c" ]] && cands+=("$c")
+    # /etc/icewarp/icewarp.conf -> IWS_INSTALL_DIR  (authoritative).
+    # Honour the $ICEWARP_CONF override (held in $CONF_DEFAULT), then fall back
+    # to the standard path; stop at the first conf that yields a value.
+    for conf in "$CONF_DEFAULT" /etc/icewarp/icewarp.conf; do
+        c="$(read_conf_install_dir "$conf")" && [[ -n "$c" ]] && { cands+=("$c"); break; }
     done
 
     cands+=("/opt/icewarp")
@@ -207,8 +209,13 @@ PERL
 # Backup + atomic replace, preserving perms/owner. $1=target $2=newcontent-file
 backup_and_write() {
     local target="$1" newf="$2" ts bak dir tmpw
-    ts="$(date +%Y%m%d-%H%M%S)"; bak="${target}.bak.${ts}"
+    ts="$(date +%Y%m%d-%H%M%S)"
+    local bdir="$ROOT/iw-fix-signup-backup"
+    mkdir -p "$bdir" 2>/dev/null || { warn "Cannot create backup dir: $bdir"; return 1; }
+    chmod 700 "$bdir" 2>/dev/null || true
+    bak="$bdir/$(basename "$target").bak.${ts}"   # outside the web root (not servable)
     cp -p "$target" "$bak" || return 1
+    chmod 600 "$bak" 2>/dev/null || true
     ok "Backup: $bak"
     dir="$(dirname "$target")"
     tmpw="$(mktemp "$dir/.iwtmp.XXXXXX")" || return 1
