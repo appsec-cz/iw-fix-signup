@@ -1,6 +1,6 @@
 # iw-fix-signup
 
-[English](README.md) · **Čeština** · [Deutsch](README.de.md) · [Italiano](README.it.md)
+[English](README.md) · **Čeština** · [Deutsch](README.de.md) · [Italiano](README.it.md) · [Türkçe](README.tr.md)
 
 Skripty pro zmírnění (mitigaci) problému se **samoregistrací uživatelů** a
 **path traversal** ve WebClientu IceWarp. K dispozici jsou dvě rovnocenné

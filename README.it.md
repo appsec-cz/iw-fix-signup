@@ -1,6 +1,6 @@
 # iw-fix-signup
 
-[English](README.md) · [Čeština](README.cs.md) · [Deutsch](README.de.md) · **Italiano**
+[English](README.md) · [Čeština](README.cs.md) · [Deutsch](README.de.md) · **Italiano** · [Türkçe](README.tr.md)
 
 Script per la mitigazione del problema di **auto-registrazione** e di
 **path traversal** nel WebClient IceWarp. Sono disponibili due implementazioni
