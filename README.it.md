@@ -65,7 +65,7 @@ La cartella di installazione viene rilevata automaticamente:
 - **Linux:** `/etc/icewarp/icewarp.conf` (`IWS_INSTALL_DIR`) → `/opt/icewarp` →
   `icewarpd.sh` in `PATH` / unit systemd / daemon in esecuzione → percorsi comuni.
 - **Windows:** registro `HKLM\SOFTWARE\WOW6432Node\IceWarp\IceWarp Server\InstallDir`
-  → percorso del servizio IceWarp → scansione del registro → percorsi comuni (`%ProgramFiles%\IceWarp`, …).
+  → percorso del servizio IceWarp → percorsi comuni (`%ProgramFiles%\IceWarp`, …).
 
 **Cluster con bilanciamento del carico:** se esiste `<install>/path.dat`, viene
 usata la cartella di configurazione condivisa indicata per `settings.xml` (il

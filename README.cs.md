@@ -65,7 +65,7 @@ Instalační složka se zjišťuje automaticky:
 - **Linux:** `/etc/icewarp/icewarp.conf` (`IWS_INSTALL_DIR`) → `/opt/icewarp` →
   `icewarpd.sh` v `PATH` / systemd jednotka / běžící démon → běžné cesty.
 - **Windows:** registry `HKLM\SOFTWARE\WOW6432Node\IceWarp\IceWarp Server\InstallDir`
-  → cesta služby IceWarp → průchod registru → běžné cesty (`%ProgramFiles%\IceWarp`, …).
+  → cesta služby IceWarp → běžné cesty (`%ProgramFiles%\IceWarp`, …).
 
 **Load-balanced clustery:** pokud existuje `<install>/path.dat`, použije se
 sdílená konfigurační složka, na kterou ukazuje, pro `settings.xml` (PHP soubor

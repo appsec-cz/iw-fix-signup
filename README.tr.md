@@ -62,15 +62,15 @@ Kurulum dizini otomatik olarak tespit edilir:
 - **Linux:** `/etc/icewarp/icewarp.conf` (`IWS_INSTALL_DIR`) → `/opt/icewarp` →
   `PATH`'teki / systemd ünitesindeki / çalışan servis üzerindeki `icewarpd.sh` → yaygın yollar.
 - **Windows:** kayıt defteri `HKLM\SOFTWARE\WOW6432Node\IceWarp\IceWarp Server\InstallDir`
-  → IceWarp servis yolu → kayıt defteri taraması → yaygın yollar (`%ProgramFiles%\IceWarp`, …).
+  → IceWarp servis yolu → yaygın yollar (`%ProgramFiles%\IceWarp`, …).
 
-**Yük dengeli kümeler:** `<kurulum>/path.dat` mevcutsa, içinde gösterilen paylaşılan yapılandırma
+**Yük dengeli kümeler:** `<install>/path.dat` mevcutsa, içinde gösterilen paylaşılan yapılandırma
 klasörü `settings.xml` için kullanılır (PHP dosyası her zaman yerel olarak yamalanır). Paylaşılan
 yapılandırma salt okunursa betik uyarı verir ve yine de yerel PHP düzeltmesini uygular.
 
 ## Güvenlik
 
-- Herhangi bir dosya değiştirilmeden önce, `<kurulum>/iw-fix-signup-backup/` dizinine (izinler: `700`, dosyalar: `600`) zaman damgalı bir yedek oluşturulur — bu sayede `filesystem.php` yedeği asla web'den erişilebilir olmaz.
+- Herhangi bir dosya değiştirilmeden önce, `<install>/iw-fix-signup-backup/` dizinine (izinler: `700`, dosyalar: `600`) zaman damgalı bir yedek oluşturulur — bu sayede `filesystem.php` yedeği asla web'den erişilebilir olmaz.
 - **Tekrar çalıştırılabilir (idempotent)** — yeniden çalıştırıldığında ek değişiklik yapmaz.
 - **Doğrulanır** — yazma işleminin ardından sonuç yeniden okunup kontrol edilir.
 - `--dry-run` seçeneği herhangi bir şey yazmadan tam olarak nelerin değişeceğini gösterir.
@@ -96,11 +96,11 @@ Değişikliğin geçerli olması için Control modülü yeniden başlatılmalıd
 
 ## Geri Alma
 
-Yedek dizininden geri yükleyin (`<kurulum>/iw-fix-signup-backup/`), örneğin:
+Yedek dizininden geri yükleyin (`<install>/iw-fix-signup-backup/`), örneğin:
 
 ```bash
-cp -p <kurulum>/iw-fix-signup-backup/settings.xml.bak.<zaman_damgası>    <kurulum>/config/_webmail/settings.xml
-cp -p <kurulum>/iw-fix-signup-backup/filesystem.php.bak.<zaman_damgası>  <kurulum>/html/_shared/tools/filesystem.php
+cp -p <install>/iw-fix-signup-backup/settings.xml.bak.<zaman_damgası>    <install>/config/_webmail/settings.xml
+cp -p <install>/iw-fix-signup-backup/filesystem.php.bak.<zaman_damgası>  <install>/html/_shared/tools/filesystem.php
 ```
 
 ## Sorumluluk Reddi

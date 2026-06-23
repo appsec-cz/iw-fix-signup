@@ -65,7 +65,7 @@ Das Installationsverzeichnis wird automatisch ermittelt:
 - **Linux:** `/etc/icewarp/icewarp.conf` (`IWS_INSTALL_DIR`) → `/opt/icewarp` →
   `icewarpd.sh` in `PATH` / systemd-Unit / laufender Daemon → übliche Pfade.
 - **Windows:** Registry `HKLM\SOFTWARE\WOW6432Node\IceWarp\IceWarp Server\InstallDir`
-  → Pfad des IceWarp-Dienstes → Registry-Durchsuchung → übliche Pfade (`%ProgramFiles%\IceWarp`, …).
+  → Pfad des IceWarp-Dienstes → übliche Pfade (`%ProgramFiles%\IceWarp`, …).
 
 **Load-Balanced-Cluster:** existiert `<install>/path.dat`, wird der dort
 angegebene gemeinsame Konfigurationsordner für `settings.xml` verwendet (die

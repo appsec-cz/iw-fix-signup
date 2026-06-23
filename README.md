@@ -64,7 +64,7 @@ The installation directory is detected automatically:
 - **Linux:** `/etc/icewarp/icewarp.conf` (`IWS_INSTALL_DIR`) → `/opt/icewarp` →
   `icewarpd.sh` on `PATH` / systemd unit / running daemon → common paths.
 - **Windows:** registry `HKLM\SOFTWARE\WOW6432Node\IceWarp\IceWarp Server\InstallDir`
-  → IceWarp service path → registry scan → common paths (`%ProgramFiles%\IceWarp`, …).
+  → IceWarp service path → common paths (`%ProgramFiles%\IceWarp`, …).
 
 **Load-balanced clusters:** if `<install>/path.dat` exists, the shared config
 folder it points to is used for `settings.xml` (the PHP file is always patched
