@@ -87,15 +87,10 @@ function Get-IwInstallDir {
                 }
             }
     } catch { }
-    # Recursive registry search
-    foreach ($rr in @('HKLM:\SOFTWARE\IceWarp','HKLM:\SOFTWARE\WOW6432Node\IceWarp')) {
-        try {
-            Get-ChildItem -Path $rr -Recurse -ErrorAction SilentlyContinue | ForEach-Object {
-                $pr = Get-ItemProperty -Path $_.PSPath -ErrorAction SilentlyContinue
-                foreach ($n in 'InstallDir','InstallPath','Path') { if ($pr.$n) { $cands.Add([string]$pr.$n) } }
-            }
-        } catch { }
-    }
+    # NOTE: no `Get-ChildItem -Recurse` over the registry here. IceWarp keeps a
+    # very deep registry tree and recursing it can raise an UNCATCHABLE
+    # StackOverflowException (kills the process; trap/try-catch cannot stop it).
+    # The direct InstallDir reads above + the common paths below are enough.
     foreach ($b in @(${env:ProgramFiles}, ${env:ProgramFiles(x86)})) { if ($b) { $cands.Add((Join-Path $b 'IceWarp')) } }
     $cands.Add('C:\Program Files\IceWarp'); $cands.Add('C:\Program Files (x86)\IceWarp'); $cands.Add('C:\IceWarp')
 
